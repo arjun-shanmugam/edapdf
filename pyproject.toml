@@ -1,9 +1,14 @@
 [project]
 name = "edapdf"
-version = "1.0.6"
+version = "1.0.8"
 description = "Simple package to build a PDF as you do EDA."
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.9"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+license = "MIT"
 dependencies = [
     "fpdf2>=2.8.2",
     "great-tables>=0.16.1",

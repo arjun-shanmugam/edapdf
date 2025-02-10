@@ -8,7 +8,7 @@ from fpdf import FPDF, Align,XPos
 from matplotlib.figure import Figure
 import pandas as pd
 import polars as pl
-from great_tables import GT
+from great_tables import GT, style, loc 
 
 
 class EDAPDF(FPDF):
@@ -55,14 +55,14 @@ class EDAPDF(FPDF):
             text_width = self.get_string_width(title)
             x = (self.w - text_width) / 2  # Center horizontally
             self.set_xy(x, y)
-            self.cell(w=text_width + 4, h=10, text=title, align="C")
+            self.multi_cell(w=text_width + 4, h=10, text=title, align="C")
         elif pos == "L":
             text_width = self.get_string_width(title)
             self.set_y(y)
-            self.cell(w=text_width + 4, h=10, text=title, align="C")
+            self.multi_cell(w=text_width + 4, h=10, text=title, align="C")
         else: 
             raise ValueError("pos argument must be 'C' or 'L'")
-        self.ln(15)
+        self.ln(25)
 
     def header(self):
         if self._header_flag:
@@ -85,7 +85,7 @@ class EDAPDF(FPDF):
         self.add_page()
         self._add_slide_title(title=title, pos="C") 
         with NamedTemporaryFile(suffix=".png") as tempfile:
-            figure.set_size_inches(6, 4)
+            figure.set_size_inches(6, 3.75)
             figure.savefig(tempfile)
             self.image(tempfile.name, x=Align.C)
 
@@ -94,8 +94,14 @@ class EDAPDF(FPDF):
         self._add_slide_title(title=title, pos="C") 
         with NamedTemporaryFile(suffix=".png") as tempfile:
             gt = GT(table)
-            gt.save(tempfile.name, scale=5)
-            self.image(tempfile.name, x=Align.C, h=101.6, keep_aspect_ratio=True)
+            gt = (gt
+                  .tab_style(style=style.text(color="black", font="Helvetica", size=15),
+                         locations=[loc.body()])
+                  .tab_style(style=style.text(color="black", font="Helvetica", size=15, weight="bold"),
+                         locations=[loc.column_labels()])
+                  .cols_align(align="center"))
+            gt.save(tempfile.name, scale=10)
+            self.image(tempfile.name, x=Align.C, h=125, keep_aspect_ratio=True)
 
     def add_text_slide(self, title: str, bullet_points: list[str]):
         self.add_page()
@@ -127,3 +133,11 @@ class EDAPDF(FPDF):
         return df
 
     
+
+"""
+from edapdf import EDAPDF
+pdf = EDAPDF(title="test")
+pdf.add_table(table=pdf._add_dummy_table(), title="my table")
+pdf.add_figure(figure=pdf._add_dummy_figure(), title="My Figure")
+pdf.output("/Users/ashanmu1/Desktop/test.pdf")
+"""

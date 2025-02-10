@@ -1,6 +1,6 @@
 [project]
 name = "edapdf"
-version = "1.0.4"
+version = "1.0.6"
 description = "Simple package to build a PDF as you do EDA."
 readme = "README.md"
 requires-python = ">=3.10"

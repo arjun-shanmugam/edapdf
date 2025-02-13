@@ -1,5 +1,5 @@
 """
-Defines EDAPresentation class.
+Defines EDAPDF class.
 """
 
 from tempfile import NamedTemporaryFile

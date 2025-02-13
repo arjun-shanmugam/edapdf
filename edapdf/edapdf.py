@@ -86,8 +86,8 @@ class EDAPDF(FPDF):
         self._add_slide_title(title=title, pos="C") 
         with NamedTemporaryFile(suffix=".png") as tempfile:
             figure.set_size_inches(6, 3.75)
-            figure.savefig(tempfile)
-            self.image(tempfile.name, x=Align.C)
+            figure.savefig(tempfile, dpi=300)
+            self.image(tempfile.name, x=Align.C, h=125, keep_aspect_ratio=True)
 
     def add_table(self, table: pd.DataFrame | pl.DataFrame, title: str = "Table"):
         self.add_page()
@@ -101,7 +101,7 @@ class EDAPDF(FPDF):
                          locations=[loc.column_labels()])
                   .cols_align(align="center"))
             gt.save(tempfile.name, scale=10)
-            self.image(tempfile.name, x=Align.C, h=125, keep_aspect_ratio=True)
+            self.image(tempfile.name, x=Align.C, h=140, keep_aspect_ratio=True)
 
     def add_text_slide(self, title: str, bullet_points: list[str]):
         self.add_page()
@@ -118,7 +118,7 @@ class EDAPDF(FPDF):
 
     def _add_dummy_figure(self):
         import matplotlib.pyplot as plt
-        fig, ax = plt.subplots()
+        fig, ax = plt.subplots(layout='tight')
         ax.scatter([1, 2, 3, 4, 5], [1, 2, 3, 4, 5])
         return fig
 
@@ -135,9 +135,11 @@ class EDAPDF(FPDF):
     
 
 """
+%load_ext autoreload
+%autoreload 2
 from edapdf import EDAPDF
 pdf = EDAPDF(title="test")
 pdf.add_table(table=pdf._add_dummy_table(), title="my table")
 pdf.add_figure(figure=pdf._add_dummy_figure(), title="My Figure")
-pdf.output("/Users/ashanmu1/Desktop/test.pdf")
+pdf.output("Path/test.pdf")
 """
